@@ -2,8 +2,10 @@ import path from "node:path";
 import { PrismaClient } from "@prisma/client";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 
-const dbPath = path.join(process.cwd(), "prisma", "venbar.db");
-const adapter = new PrismaLibSql({ url: `file:${dbPath}` });
+const tursoUrl = process.env.TURSO_DATABASE_URL;
+const adapter = tursoUrl
+  ? new PrismaLibSql({ url: tursoUrl, authToken: process.env.TURSO_AUTH_TOKEN })
+  : new PrismaLibSql({ url: `file:${path.join(process.cwd(), "prisma", "venbar.db")}` });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
